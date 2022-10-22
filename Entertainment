@@ -1,0 +1,65 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Entertainment.java
+* CIS 36B, Lab Project
+*/
+import java.util.Date;
+
+public class Entertainment extends Expense {
+	private static double entertainExpense = 0;
+	private static int numEntertain = 0;
+
+	public Entertainment() {
+		super();
+		updateCashRewardsRate();
+		updateEntertainExpense();
+		updateNumEntertain();
+	}
+
+	// Use this constructor when the user inputs a new transaction (not from the
+	// file but inputs it from console)
+	public Entertainment(double amount, String vendor) {
+		super(amount, new Date(), vendor);
+		updateCashRewardsRate();
+		updateEntertainExpense();
+		updateNumEntertain();
+	}
+
+	// Use this constructor for the new transactions from the file, not the input
+	// from the console
+	public Entertainment(double amount, Date date, String vendor) {
+		super(amount, date, vendor);
+		updateCashRewardsRate();
+		updateEntertainExpense();
+		updateNumEntertain();
+	}
+
+	// Policy 2% back on any transactions made in 2nd quarter, otherwise 0% in other
+	// quarters
+	@Override
+	public void updateCashRewardsRate() {
+		if (getDate().getMonth() >= 4 && getDate().getMonth() <= 6) {
+			setCashRewardsRate(0.02);
+		}
+	}
+
+	public static int getNumEntertain() {
+		return numEntertain;
+	}
+
+	public static double getEntertainExpense() {
+		return entertainExpense;
+	}
+
+	public void updateEntertainExpense() {
+		entertainExpense += getAmount() * (1 - getCashRewardsRate());
+	}
+
+	public void updateNumEntertain() {
+		numEntertain++;
+	}
+
+}
