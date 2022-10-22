@@ -1,0 +1,68 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Transportation.java
+* CIS 36B, Lab Project
+*/
+import java.util.Date;
+
+public class Transportation extends Expense {
+	private static double transportationExpense = 0;
+	private static int numTransportation = 0;
+
+	// default constructor
+	public Transportation() {
+		super();
+		updateCashRewardsRate();
+		updateTransportationExpense();
+		updateNumTransportation();
+	}
+
+	// Use this constructor when the user inputs a new transaction (not from the
+	// file but inputs it from console)
+	public Transportation(double amount, String vendor) {
+		super(amount, new Date(), vendor);
+		updateCashRewardsRate();
+		updateTransportationExpense();
+		updateNumTransportation();
+	}
+
+	// Use this constructor for the new transactions from the file, not the input
+	// from the console
+	public Transportation(double amount, Date date, String vendor) {
+		super(amount, date, vendor);
+		updateCashRewardsRate();
+		updateTransportationExpense();
+		updateNumTransportation();
+	}
+
+	// Policy 3% back on any transactions made in 2nd quarter, otherwise 1% in other
+	// quarters
+	@Override
+	public void updateCashRewardsRate() {
+		if (getDate().getMonth() >= 4 && getDate().getMonth() <= 6) {
+			setCashRewardsRate(0.03);
+		} else {
+			setCashRewardsRate(0.01);
+		}
+	}
+
+	public static int getNumTransportation() {
+		return numTransportation;
+	}
+
+	public static double getTransportationExpense() {
+		return transportationExpense;
+	}
+
+	public void updateTransportationExpense() {
+		transportationExpense += getAmount() * (1 - getCashRewardsRate());
+	}
+
+	public static void updateNumTransportation() {
+		numTransportation++;
+	}
+
+}
