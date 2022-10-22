@@ -1,0 +1,42 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Transaction.java
+* CIS 36B, Lab Project
+*/
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Date;
+
+public interface Transaction {
+
+	public void printCats();
+
+	public void printMenu();
+
+	public void printEntExpenses(ArrayList<Entertainment> enterts);
+
+	public void printTransExpenses(ArrayList<Transportation> transports);
+
+	public void printGrocExpenses(ArrayList<Grocery> grocs);
+
+	public int linearTranspSearch(ArrayList<Transportation> transports, Date date, boolean isFirstLimit);
+
+	public int linearEntertSearch(ArrayList<Entertainment> entertain, Date date, boolean isFirstLimit);
+
+	public int linearGrocSearch(ArrayList<Grocery> grocery, Date date, boolean isFirstLimit);
+
+	public void bubbleSortEnt(ArrayList<Entertainment> enterts);
+
+	public void bubbleSortTrans(ArrayList<Transportation> transports);
+
+	public void bubbleSortGroc(ArrayList<Grocery> grocs);
+
+	public void writeFileEntExpenses(ArrayList<Entertainment> enterts) throws FileNotFoundException;
+
+	public void writeFileTransExpenses(ArrayList<Transportation> transports) throws FileNotFoundException;
+
+	public void writeFileGrocExpenses(ArrayList<Grocery> grocs) throws FileNotFoundException;
+}
