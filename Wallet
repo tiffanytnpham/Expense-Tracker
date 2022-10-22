@@ -1,0 +1,433 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Wallet.java
+* CIS 36B, Lab Project
+*/
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
+import java.util.Arrays;
+
+public class Wallet implements Transaction {
+
+	public static void main(String[] args) throws FileNotFoundException {
+
+		Wallet w = new Wallet();
+
+		ArrayList<Entertainment> enterts = new ArrayList<Entertainment>();
+		ArrayList<Transportation> transports = new ArrayList<Transportation>();
+		ArrayList<Grocery> grocs = new ArrayList<Grocery>();
+
+		Scanner input1 = new Scanner(System.in);
+
+		String category;
+		String vendor;
+		double amount;
+		String inputDate;
+		Date date;
+
+		try {
+			File file = new File("expenses4.txt");
+			Scanner input2 = new Scanner(file);
+
+			while (input2.hasNextLine()) {
+				category = input2.nextLine();
+
+				vendor = input2.nextLine();
+
+				amount = input2.nextDouble();
+
+				input2.nextLine(); // clear the buffer
+
+				inputDate = input2.nextLine();
+				date = stringToDate(inputDate);
+
+				if (input2.hasNextLine()) {
+					input2.nextLine();
+				}
+
+				if (category.equals("entertainment")) {
+					Entertainment newEnt = new Entertainment(amount, date, vendor);
+					enterts.add(newEnt);
+				} else if (category.equals("transportation")) {
+					Transportation newTransport = new Transportation(amount, date, vendor);
+					transports.add(newTransport);
+				} else if (category.equals("groceries")) {
+					Grocery newGrocs = new Grocery(amount, date, vendor);
+					grocs.add(newGrocs);
+				}
+			}
+
+			input2.close();
+
+			System.out.println("Welcome!\n");
+			System.out.println("What would you like to do?");
+			w.printMenu();
+			System.out.print("Please enter your choice (A, B, C, or X): ");
+			String choice = input1.nextLine();
+
+			while (!choice.equalsIgnoreCase("X")) {
+				if (choice.equalsIgnoreCase("A")) {
+
+					System.out.println("\nHow would you like to allocate it?");
+					w.printCats();
+
+					System.out.print("\nEnter your choice (A, B, or C): ");
+					category = input1.nextLine();
+					boolean more = true;
+					while (more) {
+						if (category.equalsIgnoreCase("A")) {
+
+							System.out.println("Entertainment it is...");
+							System.out.print("Enter the vendor: ");
+							vendor = input1.nextLine();
+							System.out.print("Enter the amount: $");
+							amount = input1.nextDouble();
+							input1.nextLine(); // clear the buffer
+							System.out.print("Enter today's month/day/year (##/##/####):");
+							inputDate = input1.nextLine();
+							date = stringToDate(inputDate);
+
+							Entertainment newEnt = new Entertainment(amount, date, vendor);
+							enterts.add(newEnt);
+							more = false;
+						} else if (category.equalsIgnoreCase("B")) {
+
+							System.out.println("\nTransportation, then!");
+							System.out.print("Enter the vendor: ");
+							vendor = input1.nextLine();
+							System.out.print("Enter the amount: $");
+							amount = input1.nextDouble();
+							input1.nextLine(); // clear the buffer
+							System.out.print("Enter today's month/day/year (##/##/####):");
+							inputDate = input1.nextLine();
+							date = stringToDate(inputDate);
+
+							Transportation newTransport = new Transportation(amount, date, vendor);
+							transports.add(newTransport);
+							more = false;
+						} else if (category.equalsIgnoreCase("C")) {
+
+							System.out.println("\nAlright, Groceries!");
+							System.out.print("Enter the vendor: ");
+							vendor = input1.nextLine();
+							System.out.print("Enter the amount: $");
+							amount = input1.nextDouble();
+							input1.nextLine(); // clear the buffer
+							System.out.print("Enter today's month/day/year (##/##/####):");
+							inputDate = input1.nextLine();
+							date = stringToDate(inputDate);
+
+							Grocery newGroc = new Grocery(amount, date, vendor);
+							grocs.add(newGroc);
+							more = false;
+						} else {
+							System.out.println("\nInvalid option! Try again :)\n");
+							System.out.print("Please enter your choice (A, B, or C): ");
+							category = input1.nextLine();
+						}
+					}
+				} else if (choice.equalsIgnoreCase("B")) {
+					System.out.println("\nYou want to view expenses by a particular category, eh?");
+					System.out.println("\nWhich category would you like to view?");
+					w.printCats();
+					System.out.print("\nEnter your choice (A, B, or C): ");
+					category = input1.nextLine();
+
+					boolean more = true;
+					while (more) {
+						try {
+							if (category.equalsIgnoreCase("A")) {
+								DecimalFormat a = new DecimalFormat("0.00");
+								String formatted = a.format(Entertainment.getEntertainExpense());
+								System.out.println("Total Entertainment Expense deducting rebate: $" + formatted);
+								w.printEntExpenses(enterts);
+								more = false;
+							} else if (category.equalsIgnoreCase("B")) {
+								DecimalFormat a = new DecimalFormat("0.00");
+								String formatted = a.format(Transportation.getTransportationExpense());
+								System.out.println("Total Transportation Expense deducting rebate: $" + formatted);
+								w.printTransExpenses(transports);
+								more = false;
+							} else if (category.equalsIgnoreCase("C")) {
+								DecimalFormat a = new DecimalFormat("0.00");
+								String formatted = a.format(Grocery.getGroceryExpense());
+								System.out.println("Total Groceries Expense deducting rebate: $" + formatted);
+								w.printGrocExpenses(grocs);
+								more = false;
+							} else {
+								throw new Exception("\nInvalid option! Try again, funny bunny :)\n");
+							}
+
+						} catch (Exception e) {
+							String message = e.getMessage(); 
+							System.out.println(message);
+							System.out.print("\nEnter your choice (A, B, or C): "); 
+							category = input1.nextLine();
+						}
+
+					}
+				} else if (choice.equalsIgnoreCase("C")) {
+					System.out.print("\nWhich category would you like to analyze?\n");
+					w.printCats();
+					System.out.print("\nPlease enter your choice (A, B, or C): ");
+					category = input1.nextLine();
+
+					System.out.print("Enter the starting month/day/year (##/##/####): ");
+					String startDate = input1.nextLine();
+					Date start = stringToDate(startDate);
+					System.out.print("Enter the ending month/day/year (##/##/####): ");
+					String endDate = input1.nextLine();
+					Date end = stringToDate(endDate);
+					double totalExpense = 0;
+					int numEntries = 0;
+					if (category.equalsIgnoreCase("A")) {
+						ArrayList<Entertainment> enterts2 = new ArrayList<Entertainment>();
+						int startindex = w.linearEntertSearch(enterts, start, true);
+						int endindex = w.linearEntertSearch(enterts, end, false);
+						for (int i = startindex; i <= endindex; i++) {
+							Entertainment newEnt2 = enterts.get(i);
+							enterts2.add(newEnt2);
+							totalExpense += newEnt2.getAmount();
+							numEntries++;
+						}
+						DecimalFormat a = new DecimalFormat("0.00");
+						String formatted = a.format(totalExpense);
+						System.out.println("Total Entertainment expenses within time frame: $" + formatted);
+
+						w.bubbleSortEnt(enterts2);
+						w.printEntExpenses(enterts2);
+
+					} else if (category.equalsIgnoreCase("B")) {
+						System.out.println("By Tranpsportation: ");
+						ArrayList<Transportation> transports2 = new ArrayList<Transportation>();
+						int startindex = w.linearTranspSearch(transports, start, true);
+						int endindex = w.linearTranspSearch(transports, end, false);
+						for (int i = startindex; i <= endindex; i++) {
+							Transportation newTrans2 = transports.get(i);
+							transports2.add(newTrans2);
+							totalExpense += newTrans2.getAmount();
+							numEntries++;
+						}
+						DecimalFormat a = new DecimalFormat("0.00");
+						String formatted = a.format(totalExpense);
+						System.out.println("Total Transportation expenses within time frame: $" + formatted);
+						w.bubbleSortTrans(transports2);
+						w.printTransExpenses(transports2);
+
+					} else if (category.equalsIgnoreCase("C")) {
+						System.out.println("By Groceries: ");
+						ArrayList<Grocery> grocs2 = new ArrayList<Grocery>();
+						int startindex = w.linearGrocSearch(grocs, start, true);
+						int endindex = w.linearGrocSearch(grocs, end, false);
+						for (int i = startindex; i <= endindex; i++) {
+							Grocery newGrocs2 = grocs.get(i);
+							grocs2.add(newGrocs2);
+							totalExpense += newGrocs2.getAmount();
+							numEntries++;
+						}
+						DecimalFormat a = new DecimalFormat("0.00");
+						String formatted = a.format(totalExpense);
+						System.out.println("Total Groceries expenses within time frame: $" + formatted);
+						w.bubbleSortGroc(grocs2);
+						w.printGrocExpenses(grocs2);
+
+					} else {
+						System.out.println("\nInvalid option!\n");
+					}
+
+				} else {
+					System.out.println("\nInvalid option!  Try again :)");
+				}
+				System.out.println("\nWhat would you like to do?");
+				w.printMenu();
+				System.out.print("Please enter your choice (A, B, C, or X): ");
+				choice = input1.nextLine();
+			}
+
+			input1.close();
+
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+
+		System.out.println("\nGoodbye!");
+		System.out.println();
+
+		// Calls to PrintWriters
+		w.writeFileEntExpenses(enterts);
+		w.writeFileTransExpenses(transports);
+		w.writeFileGrocExpenses(grocs);
+
+	}
+
+	public void printCats() {
+		System.out.println("\nA. Entertainment\nB. Transportation\nC. Groceries");
+	}
+
+	public void printMenu() {
+		System.out.println(
+				"\nA. Enter an expense\nB. View expenses by category\nC. View expenses within a date range\nX. Exit\n");
+	}
+
+	public void printEntExpenses(ArrayList<Entertainment> enterts) {
+		System.out.println("\nEntertainment expenses: " + enterts.size() + " entries");
+		for (int i = 0; i < enterts.size(); i++) {
+			System.out.println(enterts.get(i));
+		}
+	}
+
+	public void printTransExpenses(ArrayList<Transportation> transports) {
+		System.out.println("\nTransportation expenses: " + transports.size() + " entries");
+		for (int i = 0; i < transports.size(); i++) {
+			System.out.println(transports.get(i));
+		}
+	}
+
+	public void printGrocExpenses(ArrayList<Grocery> grocs) {
+		System.out.println("\nGroceries expenses: " + grocs.size() + " entries");
+		for (int i = 0; i < grocs.size(); i++) {
+			System.out.println(grocs.get(i));
+		}
+	}
+
+	public int linearTranspSearch(ArrayList<Transportation> transports, Date date, boolean isFirstLimit) {
+		if (isFirstLimit) {
+			for (int i = 0; i < transports.size(); i++) {
+				if (date.compareTo(transports.get(i).getDate()) <= 0) {
+					return i;
+				}
+			}
+		} else {
+
+			for (int i = transports.size() - 1; i >= 0; i--) {
+				if (date.compareTo(transports.get(i).getDate()) >= 0) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public int linearEntertSearch(ArrayList<Entertainment> entertain, Date date, boolean isFirstLimit) {
+		if (isFirstLimit) {
+			for (int i = 0; i < entertain.size(); i++) {
+				if (date.compareTo(entertain.get(i).getDate()) <= 0) {
+					return i;
+				}
+			}
+		} else {
+
+			for (int i = entertain.size() - 1; i >= 0; i--) {
+				if (date.compareTo(entertain.get(i).getDate()) >= 0) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public int linearGrocSearch(ArrayList<Grocery> grocery, Date date, boolean isFirstLimit) {
+		if (isFirstLimit) {
+			for (int i = 0; i < grocery.size(); i++) {
+				if (date.compareTo(grocery.get(i).getDate()) <= 0) {
+					return i;
+				}
+			}
+		} else {
+
+			for (int i = grocery.size() - 1; i >= 0; i--) {
+				if (date.compareTo(grocery.get(i).getDate()) >= 0) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public void bubbleSortEnt(ArrayList<Entertainment> enterts) {
+		for (int i = 0; i < enterts.size() - 1; i++) {
+			for (int j = 0; j < enterts.size() - i - 1; j++) {
+				if (enterts.get(j).compareTo(enterts.get(j + 1)) > 0) {
+					Entertainment temp = enterts.get(j);
+					enterts.set(j, enterts.get(j + 1));
+					enterts.set((j + 1), temp);
+				}
+			}
+		}
+	}
+
+	public void bubbleSortTrans(ArrayList<Transportation> transports) {
+		for (int i = 0; i < transports.size() - 1; i++) {
+			for (int j = 0; j < transports.size() - i - 1; j++) {
+				if (transports.get(j).compareTo(transports.get(j + 1)) > 0) {
+					Transportation temp = transports.get(j);
+					transports.set(j, transports.get(j + 1));
+					transports.set((j + 1), temp);
+				}
+			}
+		}
+	}
+
+	public void bubbleSortGroc(ArrayList<Grocery> grocs) {
+		for (int i = 0; i < grocs.size() - 1; i++) {
+			for (int j = 0; j < grocs.size() - i - 1; j++) {
+				if (grocs.get(j).compareTo(grocs.get(j + 1)) > 0) {
+					Grocery temp = grocs.get(j);
+					grocs.set(j, grocs.get(j + 1));
+					grocs.set((j + 1), temp);
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static Date stringToDate(String input) {
+		StringBuilder toFormat = new StringBuilder(input);
+		int month = Integer.parseInt(toFormat.substring(0, toFormat.indexOf("/")));
+		toFormat.replace(0, 3, "");
+		int day = Integer.parseInt(toFormat.substring(0, toFormat.indexOf("/")));
+		toFormat.replace(0, 3, "");
+		int year = Integer.parseInt("" + toFormat);
+		return new Date(year, month, day);
+	}
+
+	public void writeFileEntExpenses(ArrayList<Entertainment> enterts) throws FileNotFoundException {
+		String filename = "Entertainment.txt";
+		PrintWriter out = new PrintWriter(filename);
+		out.println("\nEntertainment expenses:");
+		for (int i = 0; i < enterts.size(); i++) {
+			out.println(enterts.get(i));
+		}
+		out.close();
+	}
+
+	public void writeFileTransExpenses(ArrayList<Transportation> transports) throws FileNotFoundException {
+		String filename = "Transportation.txt";
+		PrintWriter out = new PrintWriter(filename);
+		out.println("\nTransportation expenses: ");
+		for (int i = 0; i < transports.size(); i++) {
+			out.println(transports.get(i));
+		}
+		out.close();
+	}
+
+	public void writeFileGrocExpenses(ArrayList<Grocery> grocs) throws FileNotFoundException {
+		String filename = "Groceries.txt";
+		PrintWriter out = new PrintWriter(filename);
+		out.println("\nGroceries expenses: ");
+		for (int i = 0; i < grocs.size(); i++) {
+			out.println(grocs.get(i));
+		}
+		out.close();
+	}
+
+}
