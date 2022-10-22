@@ -1,0 +1,101 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Expense.java
+* CIS 36B, Lab Project
+*/
+import java.util.Date;
+import java.text.DecimalFormat;
+
+public abstract class Expense implements Comparable<Expense> {
+
+	private double amount;
+	private Date date;
+	private String vendor;
+	private double cashRewardsRate;
+
+	public Expense() {
+		amount = 0.0;
+		date = null;
+		vendor = "unknown";
+		updateCashRewardsRate();
+	}
+
+	public Expense(double amount, Date date, String vendor) {
+		this.amount = amount;
+		this.date = date;
+		this.vendor = vendor;
+		updateCashRewardsRate();
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public String getVendor() {
+		return vendor;
+	}
+
+	public double getCashRewardsRate() {
+		return cashRewardsRate;
+	}
+
+	public abstract void updateCashRewardsRate();
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
+	}
+
+	public void setCashRewardsRate(double cashRewardsRate) {
+		this.cashRewardsRate = cashRewardsRate;
+	}
+
+	public void updateAmount(double amount) {
+		this.amount = amount;
+	}
+
+	@Override
+	public String toString() {
+		DecimalFormat a = new DecimalFormat("0.00");
+		String formatted = a.format(amount);
+		return vendor + ": " + (date.getMonth() + "/" + date.getDate() + "/" + date.getYear()) + " -> $" + formatted;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Expense)) {
+			return false;
+		} else {
+			Expense t = (Expense) o;
+			return (getAmount() == t.getAmount()) && (vendor == t.vendor);
+		}
+	}
+
+	@Override
+	public int compareTo(Expense o) {
+		if (this.equals(o)) {
+			return 0;
+		} else if (!(vendor.equals(o.vendor))) {
+			return vendor.compareTo(o.vendor);
+		} else {
+			return Double.compare(getAmount(), o.getAmount());
+		}
+	}
+
+}
