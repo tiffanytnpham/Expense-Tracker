@@ -1,0 +1,67 @@
+/*
+* @author Edgar Aguilar
+* @author Darren Lee
+* @author Shuai Yang
+* @author Tiffany Pham
+* Grocery.java
+* CIS 36B, Lab Project
+*/
+import java.util.Date;
+
+public class Grocery extends Expense {
+	private static double groceryExpense;
+	private static int numGrocery = 0;
+
+	public Grocery() {
+		super();
+		updateCashRewardsRate();
+		setGroceryExpense();
+		updateNumGrocery();
+	}
+
+	// Use this constructor when the user inputs a new transaction (not from the
+	// file but inputs it from console)
+	public Grocery(double amount, String vendor) {
+		super(amount, new Date(), vendor);
+		updateCashRewardsRate();
+		setGroceryExpense();
+		updateNumGrocery();
+	}
+
+	// Use this constructor for the new transactions from the file, not the input
+	// from the console
+	public Grocery(double amount, Date date, String vendor) {
+		super(amount, date, vendor);
+		updateCashRewardsRate();
+		setGroceryExpense();
+		updateNumGrocery();
+	}
+
+	// Policy 5% back on any transactions made in 2nd quarter, otherwise 2% in other
+	// quarters
+	@Override
+	public void updateCashRewardsRate() {
+		if (getDate().getMonth() >= 4 && getDate().getMonth() <= 6) {
+			setCashRewardsRate(0.05);
+		} else {
+			setCashRewardsRate(0.02);
+		}
+	}
+
+	public static int getNumGrocery() {
+		return numGrocery;
+	}
+
+	public static double getGroceryExpense() {
+		return groceryExpense;
+	}
+
+	public void setGroceryExpense() {
+		groceryExpense += getAmount() * (1 - getCashRewardsRate());
+	}
+
+	public static void updateNumGrocery() {
+		numGrocery++;
+	}
+
+}
